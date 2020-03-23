@@ -1,7 +1,7 @@
 {
-  "name": "imgstash",
+  "name": "dtinth-toolbox",
   "version": "1.0.0",
-  "description": "An Electron app for macOS that lets you paste image data from an application and drag it out as an image file to another application",
+  "description": "My toolbox",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -13,18 +13,19 @@
     "electron-builder": "^22.4.0"
   },
   "dependencies": {
+    "execa": "^4.0.0",
     "temp-write": "^4.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dtinth/imgstash.git"
+    "url": "git+https://github.com/dtinth/dtinth-toolbox.git"
   },
   "bugs": {
-    "url": "https://github.com/dtinth/imgstash/issues"
+    "url": "https://github.com/dtinth/dtinth-toolbox/issues"
   },
-  "homepage": "https://github.com/dtinth/imgstash#readme",
+  "homepage": "https://github.com/dtinth/dtinth-toolbox#readme",
   "build": {
-    "appId": "me.spacet.imgstash",
+    "appId": "me.spacet.dtinth-toolbox",
     "mac": {
       "category": "public.app-category.utilities"
     },

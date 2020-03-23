@@ -142,8 +142,8 @@ async function getKeynoteState() {
       (vScrollBar && vScrollBar.attributes['AXValue'].value()) || 0
     return {
       zoom: zoomButton.title(),
-      scrollX: hScroll,
-      scrollY: vScroll,
+      scrollX: +hScroll.toFixed(4),
+      scrollY: +vScroll.toFixed(4),
     }
   })
 }
@@ -158,15 +158,16 @@ async function setKeynoteState({ scrollX, scrollY, zoom }) {
       const zoomButton = frontWindow.toolbars[0].groups[1].menuButtons[0]
       if (zoomButton.title() !== zoom) {
         zoomButton.click().menus[0].menuItems[zoom].click()
+        delay(0.8)
       }
       const mainArea = frontWindow.scrollAreas[1]
       const hScrollBar = mainArea.attributes['AXHorizontalScrollBar'].value()
       const vScrollBar = mainArea.attributes['AXVerticalScrollBar'].value()
       if (hScrollBar) {
-        hScrollBar.attributes['AXValue'].value = scrollX
+        hScrollBar.attributes['AXValue'].value = +scrollX
       }
       if (vScrollBar) {
-        vScrollBar.attributes['AXValue'].value = scrollY
+        vScrollBar.attributes['AXValue'].value = +scrollY
       }
     },
     scrollX,

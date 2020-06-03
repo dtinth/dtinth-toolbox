@@ -51,6 +51,7 @@ App.registerFeature('keynote', {
       hover: {},
       proposed: null,
       unmounted: false,
+      currentStateKey: '',
     }
   },
   methods: {
@@ -65,13 +66,17 @@ App.registerFeature('keynote', {
         left: left,
         width: size,
         height: size,
+        border: '1px solid #fff4',
+        color: '#fff4',
         ...(this.hover[item.key]
           ? {
               border: '1px solid #d7fc70',
               color: '#d7fc70',
               background: '#000',
             }
-          : { border: '1px solid #fff4', color: '#fff4' }),
+          : this.currentStateKey === item.key
+          ? { background: '#0006' }
+          : {}),
       }
     },
     async activate(item) {
@@ -85,6 +90,8 @@ App.registerFeature('keynote', {
   async mounted() {
     const processLoop = async () => {
       const state = await getKeynoteState()
+      const stateKey = JSON.stringify(state)
+      this.currentStateKey = stateKey
       if (!validZooms.includes(state.zoom)) {
         this.status = 'Bad zoom!'
         return
@@ -93,7 +100,6 @@ App.registerFeature('keynote', {
         this.status = 'Not zoomed in.'
         return
       }
-      const stateKey = JSON.stringify(state)
       if (!this.proposed || this.proposed.key !== stateKey) {
         this.proposed = { key: stateKey, state, count: 0 }
       }
@@ -142,8 +148,8 @@ async function getKeynoteState() {
       (vScrollBar && vScrollBar.attributes['AXValue'].value()) || 0
     return {
       zoom: zoomButton.title(),
-      scrollX: +hScroll.toFixed(4),
-      scrollY: +vScroll.toFixed(4),
+      scrollX: +hScroll.toFixed(3),
+      scrollY: +vScroll.toFixed(3),
     }
   })
 }
@@ -164,10 +170,10 @@ async function setKeynoteState({ scrollX, scrollY, zoom }) {
       const hScrollBar = mainArea.attributes['AXHorizontalScrollBar'].value()
       const vScrollBar = mainArea.attributes['AXVerticalScrollBar'].value()
       if (hScrollBar) {
-        hScrollBar.attributes['AXValue'].value = +scrollX
+        hScrollBar.attributes['AXValue'].value = scrollX
       }
       if (vScrollBar) {
-        vScrollBar.attributes['AXValue'].value = +scrollY
+        vScrollBar.attributes['AXValue'].value = scrollY
       }
     },
     scrollX,

@@ -23,6 +23,9 @@ function createWindow() {
     backgroundColor: '#00353433',
     webPreferences: {
       nodeIntegration: true,
+      webPreferences: {
+        webSecurity: false,
+      },
     },
   })
 

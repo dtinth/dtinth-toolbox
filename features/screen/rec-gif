@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+const screenIndex = process.argv[2] || '1'
+const crop = process.argv[3] || ''
+const colors = +process.argv[4] || 256
+const framerate = +process.argv[5] || 12
+const filename = new Date().toJSON().replace(/\W/g, '') + '.gif'
+
+if (!crop) {
+  throw new Error('No crop')
+}
+console.log(`Record display ${screenIndex} to "${filename}"`)
+const recordCommand = [
+  `ffmpeg`,
+  `-framerate ${framerate} -f avfoundation -capture_cursor 1 -i "${screenIndex}:none"`,
+  `-vf "crop=${crop}" -c:v rawvideo -r ${framerate} -pix_fmt rgb32 -f avi -`,
+  `| ffmpeg -i -`,
+  `-vf "split[s0][s1];[s0]palettegen=max_colors=${colors}[p];[s1][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle" -y ${filename}`
+].join(' ')
+
+console.log(`$ ${recordCommand}`)
+require('child_process').execSync(recordCommand, {
+  stdio: 'inherit'
+})
+require('child_process').execSync(`open -R ${filename}`, {
+  stdio: 'inherit'
+})
+

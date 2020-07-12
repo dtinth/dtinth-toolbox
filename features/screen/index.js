@@ -1,4 +1,4 @@
-App.registerFeature('screen-capture', {
+App.registerFeature('screen', {
   template: html`
     <div id="screen-capture" class="p-1">
       TODO

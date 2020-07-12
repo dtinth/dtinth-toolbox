@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #viewerEl {
+        position: fixed;
+        box-shadow: 0 0 0 1px #090807, 0 0 8px 8px #d7fc70;
+      }
+      #resizerEl {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        bottom: -2px;
+        left: -2px;
+        cursor: -webkit-grab;
+      }
+      #moverEl {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        bottom: 2px;
+        left: 2px;
+        cursor: move;
+      }
+      #resizerEl:hover {
+        border: 4px solid #d7fc70;
+        filter: drop-shadow(0 0 2px #090807);
+      }
+      #moverEl:hover {
+        background: #d7fc7022;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="viewerEl">
+      <div id="resizerEl"></div>
+      <div id="moverEl"></div>
+    </div>
+    <script>
+      let state = { left: 128, top: 128, width: 128, height: 128 }
+      let adjusting = null
+      {
+        const match = location.hash.match(/^#(\d+):(\d+):(\d+):(\d+)/)
+        if (match) {
+          const [, width, height, left, top] = match
+          ;[state.width, state.height, state.left, state.top] = [
+            width,
+            height,
+            left,
+            top,
+          ].map((x) => +x || 0)
+        }
+      }
+      function updateViewer() {
+        Object.assign(viewerEl.style, {
+          left: state.left + 'px',
+          top: state.top + 'px',
+          width: state.width + 'px',
+          height: state.height + 'px',
+        })
+        if (typeof require !== 'undefined') {
+          require('electron').ipcRenderer.send(
+            'bounds',
+            [state.width, state.height, state.left, state.top].join(':'),
+          )
+        }
+      }
+      function beginAdjusting(e, spec) {
+        adjusting = { ...spec, x: e.clientX, y: e.clientY }
+      }
+      window.onmousemove = (e) => {
+        if (adjusting) {
+          e.preventDefault()
+          const dx = e.clientX - adjusting.x
+          const dy = e.clientY - adjusting.y
+          if (adjusting.left) state.left += adjusting.left * dx
+          if (adjusting.top) state.top += adjusting.top * dy
+          if (adjusting.width) state.width += adjusting.width * dx
+          if (adjusting.height) state.height += adjusting.height * dy
+          if (state.width < 0) {
+            state.width *= -1
+            if (adjusting.width > 0) {
+              adjusting.width = -1
+              adjusting.left = 1
+            } else {
+              adjusting.width = 1
+              adjusting.left = 0
+            }
+          }
+          if (state.height < 0) {
+            state.height *= -1
+            if (adjusting.height > 0) {
+              adjusting.height = -1
+              adjusting.top = 1
+            } else {
+              adjusting.height = 1
+              adjusting.top = 0
+            }
+          }
+          fixState()
+          adjusting.x = e.clientX
+          adjusting.y = e.clientY
+          updateViewer()
+        }
+      }
+      function fixState() {
+        if (state.left < 0) state.left = 0
+        if (state.top < 0) state.top = 0
+        if (state.left + state.width > window.innerWidth) {
+          state.left = window.innerWidth - state.width
+        }
+        if (state.top + state.height > window.innerHeight) {
+          state.top = window.innerHeight - state.height
+        }
+      }
+      window.onmouseup = (e) => {
+        adjusting = null
+      }
+      moverEl.onmousedown = (e) => {
+        e.preventDefault()
+        beginAdjusting(e, { left: 1, top: 1 })
+      }
+      resizerEl.onmousedown = (e) => {
+        const b = resizerEl.getBoundingClientRect()
+        const adjustment = {}
+        if (e.clientX < b.left + 8) {
+          adjustment.left = 1
+          adjustment.width = -1
+        } else if (e.clientX >= b.right - 8) {
+          adjustment.width = 1
+        }
+        if (e.clientY < b.top + 8) {
+          adjustment.top = 1
+          adjustment.height = -1
+        } else if (e.clientY >= b.bottom - 8) {
+          adjustment.height = 1
+        }
+        beginAdjusting(e, adjustment)
+      }
+      window.onkeydown = (e) => {
+        const move = (dx, dy) => {
+          if (e.shiftKey) {
+            state.width += dx
+            state.height += dy
+          } else {
+            state.left += dx
+            state.top += dy
+          }
+          fixState()
+          updateViewer()
+        }
+        if (e.key === 'ArrowLeft') {
+          move(-1, 0)
+        }
+        if (e.key === 'ArrowDown') {
+          move(0, 1)
+        }
+        if (e.key === 'ArrowUp') {
+          move(0, -1)
+        }
+        if (e.key === 'ArrowRight') {
+          move(1, 0)
+        }
+      }
+      updateViewer()
+    </script>
+  </body>
+</html>

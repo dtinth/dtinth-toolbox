@@ -1,4 +1,4 @@
-const osa = require('../lib/osa')
+const osa = require('../../lib/osa')
 
 const validZooms = [
   '25%',
@@ -107,7 +107,7 @@ App.registerFeature('keynote', {
       if (this.proposed.count >= 3) {
         this.history = [
           this.proposed,
-          ...this.history.filter(h => h.key !== stateKey),
+          ...this.history.filter((h) => h.key !== stateKey),
         ].slice(0, 5)
         this.status = 'Zoomed in'
       } else {
@@ -120,7 +120,7 @@ App.registerFeature('keynote', {
       } catch (e) {
         this.status = String(e)
       }
-      await new Promise(r => setTimeout(r, 1000))
+      await new Promise((r) => setTimeout(r, 1000))
     }
   },
   unmounted() {

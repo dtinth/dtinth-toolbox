@@ -83,14 +83,15 @@
         name: 'home',
         path: '/',
         component: {
-          template: html` <div>meow</div> `,
+          template: html`<div class="p-1">Hello there!</div>`,
         },
       })
     </script>
 
     <script>
-      require('./features/keynote.js')
       require('./features/iframe.js')
+      require('./features/keynote.js')
+      require('./features/screen-capture.js')
     </script>
 
     <script>

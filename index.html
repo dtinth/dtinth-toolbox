@@ -9,7 +9,7 @@
       content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"
     />
     <style>
-      @import url(./vendor/tailwind-1.2.0.css);
+      @import url(./vendor/tailwind-1.4.6.css);
       body {
         background: transparent;
         color: #fff;
@@ -52,8 +52,8 @@
   </head>
 
   <body>
-    <script src="vendor/vue-2.6.11.js"></script>
-    <script src="vendor/vue-router-3.1.6.js"></script>
+    <script src="vendor/vue-3.0.0-beta.20.js"></script>
+    <script src="vendor/vue-router-4.0.0-beta.2.js"></script>
     <div id="app"></div>
 
     <script>
@@ -83,9 +83,7 @@
         name: 'home',
         path: '/',
         component: {
-          template: html`
-            <div>meow</div>
-          `,
+          template: html` <div>meow</div> `,
         },
       })
     </script>
@@ -103,16 +101,16 @@
         remote: { getCurrentWindow },
       } = require('electron')
 
-      Vue.config.productionTip = false
-      App.router = new VueRouter({
+      App.history = VueRouter.createWebHashHistory()
+      App.router = VueRouter.createRouter({
+        history: App.history,
         routes: App.routes,
       })
-
-      const appInstance = new Vue({
+      App.instance = Vue.createApp({
         template: html`
           <div id="appLayout">
             <div id="topBar">
-              <div id="appNav">
+              <div id="appNav" class="space-x-2">
                 <router-link to="/">home</router-link>
                 <router-link
                   :key="feature"
@@ -133,11 +131,11 @@
             </div>
           </div>
         `,
-        el: '#app',
-        router: App.router,
-        data: {
-          features: App.features,
-          alwaysOnTop: getCurrentWindow().isAlwaysOnTop(),
+        data() {
+          return {
+            features: App.features,
+            alwaysOnTop: getCurrentWindow().isAlwaysOnTop(),
+          }
         },
         watch: {
           alwaysOnTop(value) {
@@ -145,6 +143,8 @@
           },
         },
       })
+      App.instance.use(App.router)
+      App.instance.mount('#app')
     </script>
   </body>
 </html>

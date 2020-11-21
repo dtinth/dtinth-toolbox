@@ -13,7 +13,10 @@
       body {
         background: transparent;
         color: #fff;
-        font: 10px system-ui;
+        font: 10px system-ui, Arimo, sans-serif;
+      }
+      .windows body {
+        background: #353433;
       }
       #appLayout {
         position: absolute;
@@ -55,6 +58,12 @@
     <script src="vendor/vue-3.0.0-beta.20.js"></script>
     <script src="vendor/vue-router-4.0.0-beta.2.js"></script>
     <div id="app"></div>
+
+    <script>
+      if (process.platform === 'win32') {
+        document.documentElement.classList.add('windows')
+      }
+    </script>
 
     <script>
       const html = String.raw

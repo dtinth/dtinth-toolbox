@@ -13,7 +13,10 @@
       body {
         background: transparent;
         color: #fff;
-        font: 10px system-ui;
+        font: 10px system-ui, Arimo, sans-serif;
+      }
+      .windows body {
+        background: #353433;
       }
       #appLayout {
         position: absolute;
@@ -57,6 +60,12 @@
     <div id="app"></div>
 
     <script>
+      if (process.platform === 'win32') {
+        document.documentElement.classList.add('windows')
+      }
+    </script>
+
+    <script>
       const html = String.raw
       const css = String.raw
 
@@ -92,6 +101,7 @@
       require('./features/iframe')
       require('./features/keynote')
       require('./features/screen')
+      require('./features/head')
     </script>
 
     <script>

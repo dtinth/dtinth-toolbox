@@ -1,3 +1,4 @@
+require('@electron/remote/main').initialize()
 const { app, ipcMain, BrowserWindow } = require('electron')
 const tempWrite = require('temp-write')
 const path = require('path')
@@ -22,12 +23,16 @@ function createWindow() {
     vibrancy: 'hud',
     backgroundColor: '#00353433',
     webPreferences: {
+      backgroundThrottling: false,
       nodeIntegration: true,
-      webPreferences: {
-        webSecurity: false,
-      },
+      nodeIntegrationInWorker: true,
+      nodeIntegrationInSubFrames: true,
+      enableRemoteModule: true,
+      webSecurity: false,
+      contextIsolation: false,
     },
   })
+  require('@electron/remote/main').enable(win.webContents)
 
   // and load the index.html of the app.
   win.loadFile('index.html')

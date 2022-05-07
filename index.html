@@ -107,10 +107,8 @@
     <script>
       const { Buffer } = require('buffer')
 
-      const {
-        ipcRenderer,
-        remote: { getCurrentWindow },
-      } = require('electron')
+      const { ipcRenderer } = require('electron')
+      const { getCurrentWindow } = require('@electron/remote')
 
       App.history = VueRouter.createWebHashHistory()
       App.router = VueRouter.createRouter({

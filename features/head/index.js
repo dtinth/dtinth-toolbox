@@ -1,20 +1,32 @@
 App.registerFeature('head', {
   template: html`
     <div id="head" class="flex flex-col h-full">
+      <select class="bg-black text-white" v-model="deviceId">
+        <option v-for="device of devices" :value="device.deviceId">
+          {{device.kind}}: {{device.label}}
+        </option>
+      </select>
       <button @click="open">[open / close]</button>
     </div>
   `,
   data() {
     return {
+      devices: [],
+      deviceId: '',
     }
+  },
+  mounted() {
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      this.devices = devices.filter((d) => d.kind === 'videoinput')
+    })
   },
   beforeUnmount() {
     this.cleanup()
   },
   methods: {
     createWindow() {
-      /** @type {Electron.Remote} */
-      const electron = top.require('electron').remote
+      /** @type {typeof import('@electron/remote')} */
+      const electron = top.require('@electron/remote')
       const { BrowserWindow, screen } = electron
       const win = new BrowserWindow({
         frame: false,
@@ -27,13 +39,17 @@ App.registerFeature('head', {
           nodeIntegration: true,
           webSecurity: false,
         },
-        width: 128,
-        height: 128,
+        width: 192,
+        height: 192,
         autoHideMenuBar: true,
       })
       win.setIgnoreMouseEvents(true)
       win.setAlwaysOnTop(true, 'screen-saver')
-      win.loadFile(require.resolve('./camera.html'))
+      win.loadFile(require.resolve('./camera.html'), {
+        query: {
+          deviceId: this.deviceId,
+        },
+      })
       win.webContents.on('devtools-opened', () => {
         win.setIgnoreMouseEvents(false)
       })
@@ -48,7 +64,7 @@ App.registerFeature('head', {
         close: () => {
           win.close()
           closed = true
-        }
+        },
       }
     },
     open() {
@@ -68,7 +84,7 @@ App.registerFeature('head', {
         this.win.close()
         this.win = null
       }
-    }
+    },
   },
   css: css`
     #head {

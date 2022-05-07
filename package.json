@@ -9,10 +9,11 @@
   "author": "Thai Pangsakulyanont <org.yi.dttvb@gmail.com> (http://dt.in.th/)",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^8.1.1",
-    "electron-builder": "^22.4.0"
+    "electron": "^18.2.0",
+    "electron-builder": "^23.0.3"
   },
   "dependencies": {
+    "@electron/remote": "^2.0.8",
     "execa": "^4.0.0",
     "temp-write": "^4.0.0"
   },
@@ -31,7 +32,9 @@
     },
     "files": [
       "main.js",
-      "index.html"
+      "index.html",
+      "features",
+      "vendor"
     ]
   }
 }

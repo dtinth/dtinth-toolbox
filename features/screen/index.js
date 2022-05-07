@@ -32,7 +32,7 @@ App.registerFeature('screen', {
     const bounds = useLocalStorage('screen:bounds', '')
     const scaleFactor = useLocalStorage('screen:scaleFactor', '1')
     const grabBounds = () => {
-      const { screen, BrowserWindow } = require('electron').remote
+      const { screen, BrowserWindow } = require('@electron/remote')
       const activeDisplay = screen.getDisplayNearestPoint(
         screen.getCursorScreenPoint(),
       )
